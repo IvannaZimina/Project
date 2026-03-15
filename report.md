@@ -117,3 +117,15 @@ The `OrderStatus` enum was chosen over plain strings to prevent typos and make s
 The project successfully demonstrates all four OOP pillars in a realistic, small-scale scenario. Abstraction and polymorphism are combined through the `Product` hierarchy so that `Cart` and `Store` never need to distinguish between product types at runtime. Encapsulation protects all object state and keeps validation in one place. Inheritance eliminates code duplication between `PhysicalProduct` and `DigitalProduct`. The Factory pattern keeps object creation centralized, and the SOLID principles result in a design where classes have clear, focused responsibilities.
 
 With more time, I would add a discount or coupon system (a good use case for the Decorator pattern), persist orders and customers to a file or database, and add an interactive command-line or web interface for browsing the catalog.
+
+## 9. How to Run the Program
+1. Ensure you have Python 3.8 or higher installed.
+2. Clone the repository and navigate to the project directory.
+3. Run the main program:
+```python main.py
+```
+4. Follow the prompts to browse products, add to cart, and checkout.
+5. To run the tests:
+```python -m pytest tests/ -v
+```
+All tests should pass successfully.
