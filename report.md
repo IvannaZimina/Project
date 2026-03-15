@@ -129,3 +129,64 @@ With more time, I would add a discount or coupon system (a good use case for the
 ```python -m pytest tests/ -v
 ```
 All tests should pass successfully.
+
+## Expected output in Console
+```
+=======================================================
+  Python Online Storefront — Product Catalog
+=======================================================
+  [P001] [Physical] Laptop | Price: $999.99 | Weight: 2.5 kg | Stock: 10
+  [P002] [Physical] Wireless Headphones | Price: $79.99 | Weight: 0.3 kg | Stock: 25
+  [P003] [Physical] Mechanical Keyboard | Price: $129.99 | Weight: 1.1 kg | Stock: 15
+  [D001] [Digital]  Python OOP Guide (eBook) | Price: $19.99 | Download: https://store.example.com/dl/oop-guide
+  [D002] [Digital]  Web Development Course | Price: $49.99 | Download: https://store.example.com/dl/webdev
+=======================================================
+
+Customer: Alice Smith | Email: alice@example.com
+
+Shopping Cart:
+  Wireless Headphones x2 = $159.98
+  Python OOP Guide (eBook) x1 = $19.99
+  Web Development Course x1 = $49.99
+  Subtotal : $229.96
+  Shipping : $1.50
+  Grand Total: $231.46
+
+--- Order Confirmation ---
+Order #1
+  Customer  : Alice Smith
+  Status    : Confirmed
+  Date      : 2026-03-15 20:07
+  Items:
+    - Wireless Headphones x2 = $159.98
+    - Python OOP Guide (eBook) x1 = $19.99
+    - Web Development Course x1 = $49.99
+  Subtotal  : $229.96
+  Shipping  : $1.50
+  Grand Total: $231.46
+
+Cart after checkout: Cart is empty.
+
+--- Second Order ---
+Order #2
+  Customer  : Bob Johnson
+  Status    : Shipped
+  Date      : 2026-03-15 20:07
+  Items:
+    - Laptop x1 = $999.99
+    - Mechanical Keyboard x2 = $259.98
+  Subtotal  : $1259.97
+  Shipping  : $11.75
+  Grand Total: $1271.72
+
+--- All Orders in Store (2 total) ---
+  Order #1 | Alice Smith | Confirmed | $231.46
+  Order #2 | Bob Johnson | Shipped | $1271.72
+
+--- Remaining Stock ---
+  [P001] Laptop: 9 left
+  [P002] Wireless Headphones: 23 left
+  [P003] Mechanical Keyboard: 13 left
+  [D001] Python OOP Guide (eBook): 99 left
+  [D002] Web Development Course: 49 left
+  ```
