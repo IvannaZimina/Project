@@ -127,7 +127,7 @@ With more time, I would add a discount or coupon system (a good use case for the
 All tests should pass successfully.
 
 ## Expected output in Console
-`
+```
 =======================================================
   Python Online Storefront — Product Catalog
 =======================================================
@@ -185,4 +185,4 @@ Order #2
   [P003] Mechanical Keyboard: 13 left
   [D001] Python OOP Guide (eBook): 99 left
   [D002] Web Development Course: 49 left
-  `
+  ```
