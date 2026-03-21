@@ -182,7 +182,7 @@ This is abstraction: the base class says what methods must exist, and subclasses
 
 ---
 
-### 3.5 Code Readability (Docstrings)
+### NB! Code Readability (Docstrings)
 
 To make the code easier to read, I use triple-quoted strings `""" ... """` in classes and methods. These are called **docstrings**. They briefly explain what a class or method does.
 
