@@ -9,19 +9,19 @@
 
 ## 1. Introduction
 
-This project is a simulation of a simple online storefront. It models a typical e-commerce scenario where a customer can browse a catalog of products, add items to a shopping cart, and complete a purchase. The goal was to build a small but complete system that shows how real-world objects — a store, a customer, a cart, a product — can be represented as classes in code.
+In this project, I built a small online store simulation. The flow is similar to a real e-commerce site: a customer can view products, add them to a cart, and check out. My goal was to create a small but complete example that shows how real objects (store, customer, cart, product) can be built as classes.
 
-The problem the project addresses is straightforward: in a real online shop, different types of products (physical and digital) behave differently. A physical product has weight and needs to be shipped; a digital product is delivered by download at no extra cost. The system needs to handle both types through the same interface, without duplicating logic.
+The main challenge is that products do not behave in the same way. Physical products need shipping, while digital products are delivered by link and have no shipping cost. I wanted one clean system that supports both types without repeating code.
 
 **Who can use it and why:**
-Any student or developer learning OOP can use this project as a reference for how to structure a multi-class Python application. It is also a clear example of how abstract classes, inheritance, and encapsulation work together in a practical setting.
+This project can help beginners in Python/OOP who want a clear and realistic example. It can also be a base for future pet-project for the portfolio.
 
 **Main features implemented:**
-- Product catalog containing both physical and digital products
-- Shopping cart: add items, remove items, view totals
-- Automatic shipping cost calculation based on product type
-- Checkout process: reduces stock, creates an order record
-- Order status tracking: Pending → Confirmed → Shipped → Delivered
+- Product catalog containing both physical and digital products;
+- Shopping cart: add items, remove items, view totals;
+- Automatic shipping cost calculation based on product type;
+- Checkout process: reduces stock, creates an order record;
+- Order status tracking: Pending → Confirmed → Shipped → Delivered;
 
 **Tools used:**
 - Language: Python 3
@@ -36,70 +36,62 @@ Any student or developer learning OOP can use this project as a reference for ho
 
 | Class | File | Responsibility |
 |---|---|---|
-| `Product` | `product.py` | **Abstract base class.** Defines the shared interface for all products: `product_id`, `name`, `price`, `stock`, `reduce_stock()`, `get_info()`, `calculate_shipping()`. Cannot be instantiated on its own. |
-| `PhysicalProduct` | `product.py` | Extends `Product`. Adds `weight_kg`. Implements shipping as $2.50 per kilogram. |
-| `DigitalProduct` | `product.py` | Extends `Product`. Adds `download_url`. Shipping cost is always $0.00. |
-| `CartItem` | `cart.py` | Pairs a `Product` with a quantity chosen by the customer. Calculates the line subtotal (price × quantity). |
-| `Cart` | `cart.py` | Holds a dictionary of `CartItem` objects. Provides `add_product()`, `remove_product()`, `clear()`, and methods to compute the total, shipping total, and grand total. |
-| `Customer` | `customer.py` | Stores the customer's ID, name, and email. Keeps a list of their completed orders. |
-| `OrderStatus` | `order.py` | An `Enum` that defines the valid states of an order: PENDING, CONFIRMED, SHIPPED, DELIVERED, CANCELLED. |
-| `Order` | `order.py` | Created at checkout. Stores a snapshot of the purchased items, totals, customer reference, and current status. |
-| `Store` | `store.py` | Manages the product catalog. Runs the checkout: validates the cart, reduces stock, creates the `Order`, and links it to the customer. |
+| `Product` | `product.py` | Abstract base class for all products. It defines common rules for every product type. |
+| `PhysicalProduct` | `product.py` | Product type for items that need shipping. |
+| `DigitalProduct` | `product.py` | Product type for downloadable items with no shipping. |
+| `CartItem` | `cart.py` | One position in the cart: which product and how many pieces. |
+| `Cart` | `cart.py` | Stores selected items and calculates totals for checkout. |
+| `Customer` | `customer.py` | Represents a buyer and keeps their order history. |
+| `OrderStatus` | `order.py` | Defines valid order states (pending, shipped, delivered, etc.). |
+| `Order` | `order.py` | Stores completed purchase data created during checkout. |
+| `Store` | `store.py` | Central class that manages catalog and performs checkout. |
 
 ### 2.2 Class Relationships
 
 ```
-                    ┌──────────────────┐
-                    │    Product (ABC) │
-                    │  - product_id    │
-                    │  - name          │
-                    │  - price         │
-                    │  - stock         │
-                    │  + get_info()    │  ← abstract
-                    │  + calculate_    │  ← abstract
-                    │    shipping()    │
-                    └────────┬─────────┘
-                             │  inherits
-               ┌─────────────┴──────────────┐
-               ▼                            ▼
-  ┌─────────────────────┐      ┌──────────────────────┐
-  │  PhysicalProduct    │      │   DigitalProduct     │
-  │  - weight_kg        │      │   - download_url     │
-  │  + calculate_       │      │   + calculate_       │
-  │    shipping()→$/kg  │      │     shipping()→ $0   │
-  └─────────────────────┘      └──────────────────────┘
+Product (ABC)
+    |-- PhysicalProduct
+    |-- DigitalProduct
 
-  ┌────────────┐   contains   ┌───────────────┐
-  │   Cart     │ ────────────▶│   CartItem    │
-  │            │              │  - product    │◀── references Product
-  │            │              │  - quantity   │
-  └─────┬──────┘              └───────────────┘
-        │ used by
-        ▼
-  ┌───────────────────────────────────────┐
-  │              Store                    │
-  │  - catalog (dict of Products)         │
-  │  + checkout(customer, cart) → Order   │
-  └──────────────────┬────────────────────┘
-                     │ creates
-                     ▼
-              ┌─────────────┐      ┌───────────────┐
-              │    Order    │◀─────│   Customer    │
-              │  - items[]  │      │  - orders[]   │
-              │  - status   │      └───────────────┘
-              └─────────────┘
+Cart
+    |-- contains --> CartItem
+CartItem
+    |-- references --> Product
+
+Store
+    |-- has catalog of --> Product
+    |-- uses --> Cart
+    |-- receives --> Customer
+    |-- creates --> Order
+
+Order
+    |-- uses status --> OrderStatus
 ```
+
+| Class A | Relation | Class B | Why this relation exists |
+|---|---|---|---|
+| `PhysicalProduct` | inherits from | `Product` | Reuses common product logic and overrides specific behavior. |
+| `DigitalProduct` | inherits from | `Product` | Same base interface, different shipping behavior. |
+| `Cart` | contains | `CartItem` | Cart is built from line items. |
+| `CartItem` | references | `Product` | Each line item stores product + quantity. |
+| `Store` | manages catalog of | `Product` | Store keeps all products in one place. |
+| `Store` | uses | `Cart` | Checkout reads selected items from cart. |
+| `Store` | receives | `Customer` | Checkout is done for a specific customer. |
+| `Store` | creates | `Order` | Final result of checkout is a new order. |
+| `Order` | uses | `OrderStatus` | Order state is controlled by enum values. |
+
+This section shows both a simple structure diagram and a direct relation table, so it is easy to see not only what classes exist, but also how they interact.
 
 ### 2.3 Key Design Decisions
 
 **Why `Product` is abstract:**
-Both `PhysicalProduct` and `DigitalProduct` share a lot of common data (name, price, stock), but their shipping logic is completely different. Making `Product` an abstract base class forces every new product type to implement `get_info()` and `calculate_shipping()`. This way the rest of the program never needs to check which type a product is — it just calls the method and gets the right answer.
+`PhysicalProduct` and `DigitalProduct` share common fields, but shipping works differently. So I made `Product` abstract: every new product type must implement `get_info()` and `calculate_shipping()`. Because of this, the rest of the code does not need `if product type ...` checks everywhere.
 
 **Why `CartItem` is a separate class (not just a dictionary):**
-A dictionary like `{product: quantity}` would work for storing items, but it cannot hold behaviour (such as calculating its own subtotal). A `CartItem` object owns its product and quantity, and handles its own calculation. This keeps the logic where the data is.
+I could store cart data as `{product: quantity}`, but then calculation logic would be spread across other places. With `CartItem`, one object keeps both data and behavior (for example, subtotal). This made cart code cleaner.
 
 **Why `Order` stores a snapshot of items (not references):**
-After checkout the cart is cleared and stock is reduced. If `Order` stored only references to products, and those products were later removed from the catalog, the order record would become invalid. Storing a copy of the cart items at the moment of purchase keeps order history reliable.
+After checkout, the cart is cleared and product stock changes. If `Order` kept only live references, old orders could become incorrect later. That is why I store a snapshot at purchase time, so order history stays correct.
 
 ---
 
@@ -107,7 +99,7 @@ After checkout the cart is cleared and stock is reduced. If `Order` stored only 
 
 ### 3.1 Encapsulation
 
-All attributes in every class are declared as **private** (prefixed with `_`). They are exposed to the outside world only through `@property` getters. Where the value can be changed, a setter with validation is provided.
+In my classes, fields are **private** (`_field`) and are accessed through `@property`. When values can change, I use setters with validation.
 
 Example — `price` in `Product`:
 
@@ -123,13 +115,13 @@ def price(self, value: float):
     self._price = value
 ```
 
-No external code can set a negative price. The same pattern is applied to `quantity` in `CartItem`: setting it below 1 raises an error immediately. This means the objects always hold valid data — the validation is done once, inside the class, not scattered around the program.
+So, outside code cannot set a negative price. I use the same idea for `CartItem.quantity` (it cannot be less than 1). This keeps objects valid and avoids repeated checks in many places.
 
 ---
 
 ### 3.2 Inheritance
 
-`PhysicalProduct` and `DigitalProduct` both inherit from `Product`. The shared attributes (`product_id`, `name`, `price`, `stock`) and the shared method `reduce_stock()` are defined once in the parent class and reused automatically by both children.
+`PhysicalProduct` and `DigitalProduct` both inherit from `Product`. Common data and logic are written once in the parent class and reused by child classes.
 
 ```python
 class PhysicalProduct(Product):
@@ -138,13 +130,13 @@ class PhysicalProduct(Product):
         self._weight_kg = weight_kg
 ```
 
-Each subclass then only adds what is specific to it (`weight_kg` or `download_url`) and provides its own implementation of the abstract methods. This eliminates duplication: if the stock-reduction logic needs to change, it changes in one place (`Product`), not in every product class.
+Each subclass adds only what is specific to it (`weight_kg` or `download_url`) and implements abstract methods in its own way. This reduces duplicated code and is easier to maintain.
 
 ---
 
 ### 3.3 Polymorphism
 
-Both subclasses override `calculate_shipping()` with different behaviour. `Cart` calls this method on every product in the cart without ever checking the type:
+Both subclasses override `calculate_shipping()`. In `Cart`, I call this method for all products without checking the exact type:
 
 ```python
 def get_shipping_total(self) -> float:
@@ -155,15 +147,15 @@ def get_shipping_total(self) -> float:
     )
 ```
 
-When the item is a `PhysicalProduct`, `calculate_shipping()` returns `weight_kg * 2.50`. When it is a `DigitalProduct`, it returns `0.0`. The same one line of code produces the correct result for both types at runtime. This is polymorphism: the same call, different behaviour depending on the actual object.
+For `PhysicalProduct`, shipping is based on weight. For `DigitalProduct`, shipping is `0.0`. The call is the same, but behavior is different depending on the object type. This is practical polymorphism.
 
-The same applies to `get_info()` — it is called the same way for every product in `Store.display_catalog()`, but each subclass produces a different formatted string.
+The same idea works for `get_info()`: one method call, different output format for each product class.
 
 ---
 
 ### 3.4 Abstraction
 
-`Product` is defined as an **abstract base class** using Python's `abc` module:
+I defined `Product` as an **abstract base class** using Python `abc`:
 
 ```python
 from abc import ABC, abstractmethod
@@ -179,14 +171,28 @@ class Product(ABC):
         pass
 ```
 
-The `@abstractmethod` decorator means Python will refuse to create a `Product()` object directly:
+Because of `@abstractmethod`, Python will not allow direct creation of `Product()`:
 
 ```python
 p = Product("P1", "Test", 5.0, 10)
 # → TypeError: Can't instantiate abstract class Product
 ```
 
-This is abstraction: the base class defines *what* every product must be able to do, without specifying *how*. The "how" is the responsibility of each concrete subclass. The rest of the application only needs to know about the interface (`get_info`, `calculate_shipping`), not the internal details of any specific product type.
+This is abstraction: the base class says what methods must exist, and subclasses define how they work. So the rest of the program uses one common interface (`get_info`, `calculate_shipping`) and does not depend on internal details.
+
+---
+
+### 3.5 Code Readability (Docstrings)
+
+To make the code easier to read, I use triple-quoted strings `""" ... """` in classes and methods. These are called **docstrings**. They briefly explain what a class or method does.
+
+Example:
+```python
+def get_orders(self) -> list:
+    """Return a copy of the customer's orders."""
+    return list(self._orders)
+```
+This helps quickly understand the purpose of the code without reading all implementation details.
 
 ---
 
@@ -194,9 +200,8 @@ This is abstraction: the base class defines *what* every product must be able to
 
 | File | Why it is relevant |
 |---|---|
-| [product.py](product.py) | Shows abstraction, inheritance, encapsulation, and polymorphism all in one file — the most important file for demonstrating OOP. |
-| [cart.py](cart.py) | Shows how `CartItem` encapsulates product+quantity, and how `Cart` uses polymorphism via `calculate_shipping()`. |
-| [store.py](store.py) | Shows how objects collaborate: `Store` uses `Cart`, `Customer`, and creates `Order`. |
-| [customer.py](customer.py) | Simple but clean example of encapsulation. |
-| [order.py](order.py) | Shows use of `Enum` for order status and a snapshot design decision. |
-| [main.py](main.py) | Demonstrates the full flow end-to-end — good to run live during a defence. |
+| [product.py](product.py) | Shows abstraction, inheritance, encapsulation, and polymorphism in one file. |
+| [cart.py](cart.py) | Shows how `CartItem` combines product + quantity, and how `Cart` uses polymorphism via `calculate_shipping()`. |
+| [store.py](store.py) | Shows how objects work together: `Store` uses `Cart`, `Customer`, and creates `Order`. |
+| [customer.py](customer.py) | A simple and clear example of encapsulation. |
+| [order.py](order.py) | Shows `Enum` for order status and the snapshot idea. |
