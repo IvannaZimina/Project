@@ -196,12 +196,12 @@ This helps quickly understand the purpose of the code without reading all implem
 
 ---
 
-## Files recommended for the intermediate submission
+## Classes Demonstrating Class Design and OOP Principles
 
-| File | Why it is relevant |
+| Class | Why it is relevant |
 |---|---|
-| [product.py](product.py) | Shows abstraction, inheritance, encapsulation, and polymorphism in one file. |
-| [cart.py](cart.py) | Shows how `CartItem` combines product + quantity, and how `Cart` uses polymorphism via `calculate_shipping()`. |
-| [store.py](store.py) | Shows how objects work together: `Store` uses `Cart`, `Customer`, and creates `Order`. |
-| [customer.py](customer.py) | A simple and clear example of encapsulation. |
-| [order.py](order.py) | Shows `Enum` for order status and the snapshot idea. |
+| `Product`, `PhysicalProduct`, `DigitalProduct` | Core example of abstraction, inheritance, and polymorphism ([product.py](product.py)). |
+| `CartItem`, `Cart` | Show composition (`Cart` contains `CartItem`) and shipping polymorphism ([cart.py](cart.py)). |
+| `Store` | Main coordinator class that connects catalog, cart, customer, and order flow ([store.py](store.py)). |
+| `Customer` | Clear example of encapsulation and order history management ([customer.py](customer.py)). |
+| `Order`, `OrderStatus` | Show order snapshot design and controlled status lifecycle ([order.py](order.py)). |
