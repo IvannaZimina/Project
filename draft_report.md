@@ -194,16 +194,3 @@ def get_orders(self) -> list:
 ```
 This helps quickly understand the purpose of the code without reading all implementation details.
 
----
-
-## Classes Demonstrating Class Design and OOP Principles
-
-These files can still be improved later, because at this stage the report covers mainly the first three sections, focused on class design and core OOP principles.
-
-| Class | Why it is relevant |
-|---|---|
-| `Product`, `PhysicalProduct`, `DigitalProduct` | Core example of abstraction, inheritance, and polymorphism ([product.py](product.py)). |
-| `CartItem`, `Cart` | Show composition (`Cart` contains `CartItem`) and shipping polymorphism ([cart.py](cart.py)). |
-| `Store` | Main coordinator class that connects catalog, cart, customer, and order flow ([store.py](store.py)). |
-| `Customer` | Clear example of encapsulation and order history management ([customer.py](customer.py)). |
-| `Order`, `OrderStatus` | Show order snapshot design and controlled status lifecycle ([order.py](order.py)). |
