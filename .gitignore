@@ -22,3 +22,10 @@ ENV/
 .DS_Store
 Thumbs.db
 .vscode/
+
+# Reports
+report.md
+draft_report.md
+
+# Notebook
+oop.ipynb
