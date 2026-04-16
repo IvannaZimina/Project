@@ -19,20 +19,20 @@ I built a small online store simulation where a customer can view products, add 
 
 ### 2.1 List of Classes
 
-| Class | File | Responsibility |
-|---|---|---|
-| `Product` | `src/core/product.py` | Abstract base class for all products. It defines common rules for every product type. |
-| `PhysicalProduct` | `src/core/product.py` | Product type for items that need shipping. |
-| `DigitalProduct` | `src/core/product.py` | Product type for downloadable items with no shipping. |
-| `CartItem` | `src/core/cart.py` | One position in the cart: which product and how many pieces. |
-| `Cart` | `src/core/cart.py` | Stores selected items and calculates totals for checkout. |
-| `Customer` | `src/core/customer.py` | Represents a buyer and keeps their order history. |
-| `OrderStatus` | `src/core/order.py` | Defines valid order states (pending, shipped, delivered, etc.). |
-| `Order` | `src/core/order.py` | Stores completed purchase data created during checkout. |
-| `Store` | `src/store.py` | Central class that manages catalog and performs checkout. |
-| `CheckoutProcessor` | `src/services/checkout_processor.py` | Handles the checkout process, including stock reduction and order creation. |
-| `InventoryManager` | `src/services/inventory.py` | Manages the store's product inventory. |
-| `OrderManager` | `src/services/orders.py` | Manages the store's order history and order retrieval. |
+| Class | Responsibility |
+|---|---|
+| `Product` | Abstract base class for all products. It defines common rules for every product type. |
+| `PhysicalProduct` | Product type for items that need shipping. |
+| `DigitalProduct` | Product type for downloadable items with no shipping. |
+| `CartItem` | One position in the cart: which product and how many pieces. |
+| `Cart` | Stores selected items and calculates totals for checkout. |
+| `Customer` | Represents a buyer and keeps their order history. |
+| `OrderStatus` | Defines valid order states (pending, shipped, delivered, etc.). |
+| `Order` | Stores completed purchase data created during checkout. |
+| `Store` | Central class that manages catalog and performs checkout. |
+| `CheckoutProcessor` | Handles the checkout process, including stock reduction and order creation. |
+| `InventoryManager` | Manages the store's product inventory. |
+| `OrderManager` | Manages the store's order history and order retrieval. |
 
 ### 2.2 Class Relationships
 
@@ -59,14 +59,13 @@ Order
   |-- uses status --> OrderStatus
 ```
 
-| Class A              | Relation               | Class B           | Why this relation exists                              |
-|----------------------|------------------------|-------------------|-----------------------------------------------------|
-| `PhysicalProduct`    | inherits from          | `Product`         | Reuses common product logic and overrides specific behavior. |
-| `DigitalProduct`     | inherits from          | `Product`         | Same base interface, different shipping behavior.   |
-| `Cart`               | contains               | `CartItem`        | Cart is built from line items.                      |
-| `CartItem`           | references             | `Product`         | Each line item stores product + quantity.           |
-| `Store`              | coordinates            | `Product`, `Cart`, `Customer`, `Order`, `CheckoutProcessor`, `InventoryManager`, `OrderManager` | Central class coordinating catalog, cart, checkout, and order management. |
-| `Order`              | uses                   | `OrderStatus`     | Order state is controlled by enum values.           |
+| Class A | Relation | Class B | Why this relation exists |
+|---|---|---|---|
+| `PhysicalProduct`, `DigitalProduct` | inherit from | `Product` | Same base interface, different behavior. |
+| `Cart` | contains | `CartItem` | Cart is built from line items. |
+| `CartItem` | references | `Product` | Each line item stores product + quantity. |
+| `Store` | coordinates | `Product`, `Cart`, `Customer`, `Order`, `CheckoutProcessor`, `InventoryManager`, `OrderManager` | Central coordinator of catalog and checkout. |
+| `Order` | uses | `OrderStatus` | Order state is controlled by enum values. |
 
 This section shows both a simple structure diagram and a direct relation table, so it is easy to see not only what classes exist, but also how they interact.
 
