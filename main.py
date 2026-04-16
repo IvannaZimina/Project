@@ -9,6 +9,7 @@ from cart import Cart
 from customer import Customer
 from factory import ProductFactory
 from order import OrderStatus
+from checkout_processor import CheckoutProcessor
 
 
 def main():
@@ -17,26 +18,57 @@ def main():
     # ------------------------------------------------------------------ #
     store = Store("Python Online Storefront")
 
-    store.add_product(ProductFactory.create(
-        "physical", product_id="P001", name="Laptop",
-        price=999.99, stock=10, weight_kg=2.5
-    ))
-    store.add_product(ProductFactory.create(
-        "physical", product_id="P002", name="Wireless Headphones",
-        price=79.99, stock=25, weight_kg=0.3
-    ))
-    store.add_product(ProductFactory.create(
-        "physical", product_id="P003", name="Mechanical Keyboard",
-        price=129.99, stock=15, weight_kg=1.1
-    ))
-    store.add_product(ProductFactory.create(
-        "digital", product_id="D001", name="Python OOP Guide (eBook)",
-        price=19.99, stock=100, download_url="https://store.example.com/dl/oop-guide"
-    ))
-    store.add_product(ProductFactory.create(
-        "digital", product_id="D002", name="Web Development Course",
-        price=49.99, stock=50, download_url="https://store.example.com/dl/webdev"
-    ))
+    # Product list, as if it were loaded from a database.
+    # The type is explicit: "physical" or "digital".
+    products_data = [
+        # Physical products: they have weight and require shipping.
+        {
+            "product_type": "physical",
+            "product_id": "P001",
+            "name": "Laptop",
+            "price": 999.99,
+            "stock": 10,
+            "weight_kg": 2.5
+        },
+        {
+            "product_type": "physical",
+            "product_id": "P002",
+            "name": "Wireless Headphones",
+            "price": 79.99,
+            "stock": 25,
+            "weight_kg": 0.3
+        },
+        {
+            "product_type": "physical",
+            "product_id": "P003",
+            "name": "Mechanical Keyboard",
+            "price": 129.99,
+            "stock": 15,
+            "weight_kg": 1.1
+        },
+        # Digital products: they are downloadable and do not require shipping.
+        {
+            "product_type": "digital",
+            "product_id": "D001",
+            "name": "Python OOP Guide (eBook)",
+            "price": 19.99,
+            "stock": 100,
+            "download_url": "https://store.example.com/dl/oop-guide"
+        },
+        {
+            "product_type": "digital",
+            "product_id": "D002",
+            "name": "Web Development Course",
+            "price": 49.99,
+            "stock": 50,
+            "download_url": "https://store.example.com/dl/webdev"
+        },
+    ]
+
+    # Add each product to the store through the factory.
+    for product_info in products_data:
+        product = ProductFactory.create(**product_info)
+        store.add_product(product)
 
     store.display_catalog()
 
@@ -56,7 +88,7 @@ def main():
     # ------------------------------------------------------------------ #
     #  3. Checkout → Order is created, cart is cleared                    #
     # ------------------------------------------------------------------ #
-    order = store.checkout(customer, cart)
+    order = store._checkout_processor.process_checkout(customer, cart, store._orders)
     order.update_status(OrderStatus.CONFIRMED)
 
     print("\n--- Order Confirmation ---")
@@ -72,7 +104,7 @@ def main():
     cart2.add_product(store.get_product("P001"))   # 1 × Laptop
     cart2.add_product(store.get_product("P003"), quantity=2)  # 2 × Keyboard
 
-    order2 = store.checkout(customer2, cart2)
+    order2 = store._checkout_processor.process_checkout(customer2, cart2, store._orders)
     order2.update_status(OrderStatus.SHIPPED)
 
     print("\n--- Second Order ---")
