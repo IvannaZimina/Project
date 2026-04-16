@@ -38,6 +38,9 @@ This project can help beginners in Python/OOP who want a clear and realistic exa
 | `OrderStatus` | `order.py` | Defines valid order states (pending, shipped, delivered, etc.). |
 | `Order` | `order.py` | Stores completed purchase data created during checkout. |
 | `Store` | `store.py` | Central class that manages catalog and performs checkout. |
+| `CheckoutProcessor` | `checkout_processor.py` | Handles the checkout process, including stock reduction and order creation. |
+| `InventoryManager` | `inventory.py` | Manages the store's product inventory. |
+| `OrderManager` | `orders.py` | Manages the store's order history and order retrieval. |
 
 ### 2.2 Class Relationships
 
@@ -193,17 +196,24 @@ This helps quickly understand the purpose of the code without reading all implem
 
 ### Factory Pattern (`ProductFactory`)
 
-`ProductFactory` in `factory.py` provides a single entry point for creating products. Client code calls `ProductFactory.create("physical", ...)` or `ProductFactory.create("digital", ...)` instead of calling the constructors directly. This hides construction details (e.g., which arguments belong to which class), makes it easy to add new product types in one place, and keeps the catalog-setup code in `main.py` uniform and readable.
+`ProductFactory` in `factory.py` is a small helper class for creating products. In `main.py`, I do not call `PhysicalProduct(...)` or `DigitalProduct(...)` directly. Instead, I call `ProductFactory.create(...)`, and the factory decides which product class to use based on the type.
+
+This makes the code easier to read because the product creation logic is in one place. It also makes future changes simpler, because if I want to add a new product type later, I only need to update the factory instead of changing many parts of the program.
 
 ---
 
 ## 5. SOLID Principles
 
-### Single Responsibility Principle
-Each class has exactly one reason to change. `Cart` is responsible only for managing the collection of items and calculating totals — it does not know about customers or orders. `Order` only stores the data of a completed purchase. `Store` is the only class that orchestrates the checkout flow. If the shipping formula changes, only `PhysicalProduct` needs to be updated. If the checkout steps change, only `Store` needs to be updated.
+### 5.1 Single Responsibility Principle
+Each class has exactly one reason to change:
+- `Cart` is responsible only for managing the collection of items and calculating totals — it does not know about customers or orders.
+- `Order` only stores the data of a completed purchase.
+- `Store` is the only class that orchestrates the checkout flow. If the shipping formula changes, only `PhysicalProduct` needs to be updated. If the checkout steps change, only `Store` needs to be updated.
 
-### Open/Closed Principle
-The system is open for extension but closed for modification. Adding a new product type (for example, a `SubscriptionProduct`) requires only creating a new subclass of `Product` and a new branch in `ProductFactory.create()`. The existing classes `Cart`, `Store`, and `Order` do not need to change at all, because they interact with products through the `Product` interface (`calculate_shipping()`, `get_info()`, etc.).
+### 5.2 Open/Closed Principle
+The system is open for extension but closed for modification:
+- Adding a new product type (e.g., `SubscriptionProduct`) requires only creating a new subclass of `Product` and a new branch in `ProductFactory.create()`.
+- The existing classes `Cart`, `Store`, and `Order` do not need to change at all, because they interact with products through the `Product` interface (`calculate_shipping()`, `get_info()`, etc.).
 
 ---
 
@@ -222,7 +232,7 @@ All tests are located in `tests/test_store.py` and use Python's built-in `unitte
 
 Running all tests:
 ```
-python -m pytest tests/ -v
+py -m pytest tests/ -v
 ```
 Result: **26 passed**.
 
@@ -247,13 +257,14 @@ With more time, I would add a discount or coupon system (a good use case for the
 ## 9. How to Run the Program
 1. Ensure you have Python 3.8 or higher installed.
 2. Clone the repository and navigate to the project directory.
-3. Run the main program: **python main.py**
+3. Run the main program: **py main.py**
 4. Follow the prompts to browse products, add to cart, and checkout.
-5. To run the tests: **python -m pytest tests/ -v**
+5. To run the tests: **py -m pytest tests/ -v**
 All tests should pass successfully.
 
 ## Expected output in Console
 ```
+
 =======================================================
   Python Online Storefront — Product Catalog
 =======================================================
@@ -278,7 +289,7 @@ Shopping Cart:
 Order #1
   Customer  : Alice Smith
   Status    : Confirmed
-  Date      : 2026-03-15 20:07
+  Date      : 2026-04-16 17:55
   Items:
     - Wireless Headphones x2 = $159.98
     - Python OOP Guide (eBook) x1 = $19.99
@@ -293,7 +304,7 @@ Cart after checkout: Cart is empty.
 Order #2
   Customer  : Bob Johnson
   Status    : Shipped
-  Date      : 2026-03-15 20:07
+  Date      : 2026-04-16 17:55
   Items:
     - Laptop x1 = $999.99
     - Mechanical Keyboard x2 = $259.98
